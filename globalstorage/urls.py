@@ -6,7 +6,7 @@ urlpatterns = [
         "folders/<int:dir_id>/",
         views.DirectoryListCreateView.as_view(),
         name="list_directory",
-    ), # GET, POST
+    ),  # GET, POST
     path(
         "open_folder/<int:pk>/",
         views.DirectoryDetailView.as_view(),

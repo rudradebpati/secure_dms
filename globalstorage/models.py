@@ -24,7 +24,7 @@ class Directory(BaseAbstractModel):
 
 class FileExtension(models.Model):
     name = models.CharField(max_length=255)
-    size_limit=models.IntegerField(default=0)    # in MB, 0 for no limit
+    size_limit=models.IntegerField(default=0)    # in KB, 0 for no limit
     description=models.CharField(max_length=255)
 
     class Meta:

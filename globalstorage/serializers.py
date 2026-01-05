@@ -3,6 +3,8 @@ from rest_framework import serializers
 from .models import *
 from . import services
 from django.urls import reverse
+import os
+from .models import File
 
 
 class FileSerializer(serializers.ModelSerializer):
@@ -10,25 +12,47 @@ class FileSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        allowed_extensions = services.get_user_allowed_extensions(
-            self.context.get("request").user
-        )
-        self.fields["file"].validators.append(
-            FileExtensionValidator(allowed_extensions=allowed_extensions)
-        )
+        request = self.context.get("request")
+        if request and request.user.is_authenticated:
+            allowed_extensions = services.get_user_allowed_extensions(request.user)
+            self.fields["file"].validators.append(
+                FileExtensionValidator(allowed_extensions=allowed_extensions)
+            )
 
-    def validate_folder(self, obj):
+    def validate_folder(self, folder):
         # Ensure the folder belongs to the user
-        if obj.owner != self.context["request"].user:
+        if folder.owner != self.context["request"].user:
             raise serializers.ValidationError("You do not own this folder.")
-        return obj
+        return folder
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        uploaded_file = validated_data["file"]
+
+        # Dynamically calculate file size and extension
+        size_in_kb = uploaded_file.size / 1024
+        validated_data["size"] = size_in_kb
+        extension = os.path.splitext(uploaded_file.name)[1].lstrip(".").lower()
+        # Assign supported extension
+        ext_obj = FileExtension.objects.filter(name=extension).first()
+        if not ext_obj:
+            raise serializers.ValidationError("File extension not allowed.")
+        if ext_obj.size_limit and size_in_kb > ext_obj.size_limit:
+            raise serializers.ValidationError(
+                "File size limit for this extension exceeded."
+            )
+        validated_data["file_extension"] = ext_obj
+        validated_data["name"] = uploaded_file.name
+        validated_data["owner"] = user
+        return File.objects.create(**validated_data)
 
     class Meta:
         model = File
-        fields = ["id", "folder", "file", "name", "size"]
+        fields = ["id", "folder", "file", "name", "size", "file_extension"]
+
 
 class FileDownloadSerializer(serializers.ModelSerializer):
-    file_url=serializers.SerializerMethodField(read_only=True)
+    file_url = serializers.SerializerMethodField(read_only=True)
 
     def get_file_url(self, obj):
         request = self.context.get("request")
@@ -38,6 +62,7 @@ class FileDownloadSerializer(serializers.ModelSerializer):
     class Meta:
         model = File
         fields = ["file", "name", "file_url"]
+
 
 class ImmediateDirectoriesSerializer(serializers.ModelSerializer):
     # This serializer is written to only load surface level of folder and files,
