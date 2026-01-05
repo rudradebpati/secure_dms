@@ -44,10 +44,9 @@ class File(BaseAbstractModel):
         db_name="globalstorage_files"
 
 
-
 class UserExtensionMap(BaseAbstractModel):
     # Additional model to restrict user to specific extensions
-    extension = models.ForeignKey(FileExtensions, on_delete=models.CASCADE)
+    extension = models.ForeignKey(FileExtension, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     class Meta:
         # unique_together = ("extension", "user")
