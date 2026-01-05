@@ -6,7 +6,17 @@ urlpatterns = [
         "folders/<int:dir_id>/",
         views.DirectoryListCreateView.as_view(),
         name="list_directory",
-    ),  # GET, POST
+    ),  # POST for creation of subfolder
+    path(
+        "folders/",
+        views.DirectoryListCreateView.as_view(),
+        name="list_directory",
+    ),  # POST for empty folder on surface level
+    path(
+        "folders/",
+        views.DirectoryListCreateView.as_view(),
+        name="list_directory",
+    ),  # GET for all folders list
     path(
         "open_folder/<int:pk>/",
         views.DirectoryDetailView.as_view(),

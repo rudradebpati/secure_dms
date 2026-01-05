@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+from datetime import timedelta
 from dotenv import load_dotenv
 from pathlib import Path
 import os
@@ -42,8 +42,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    "globalstorage",    # Added APP
-    "user", # Added App
+    "globalstorage",    # Added
+    "user", # Added
 ]
 
 MIDDLEWARE = [
@@ -111,6 +111,19 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
+
+# JWT Configurations
+SIMPLE_JWT = {
+    # Access token lifetime
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=int(os.getenv("ACCESS_TOKEN_LIFETIME"))),  # default is 5 minutes
+    # Refresh token lifetime
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=int(os.getenv("REFRESH_TOKEN_LIFETIME"))),  # default is 1 day
+    # Optional: whether refresh tokens should rotate
+    "ROTATE_REFRESH_TOKENS": True,
+    # Optional: blacklist old refresh tokens when rotated
+    "BLACKLIST_AFTER_ROTATION": True,
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/

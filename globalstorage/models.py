@@ -23,7 +23,7 @@ class Directory(BaseAbstractModel):
         db_table="globalstorage_directories"
 
 class FileExtension(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     size_limit=models.IntegerField(default=0)    # in KB, 0 for no limit
     description=models.CharField(max_length=255)
 

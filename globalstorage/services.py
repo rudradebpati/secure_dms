@@ -1,4 +1,4 @@
-from .models import UserExtensionMap
+from .models import UserExtensionMap, FileExtension
 
 
 def get_user_allowed_extensions(user_obj):
@@ -16,4 +16,6 @@ def get_user_allowed_extensions(user_obj):
             "extension__name", flat=True
         )
     )
+    if not ext_list:    # If a user is not assigned with extension Allow him all available extensions
+        return list(FileExtension.objects.all().values_list("name", flat=True))
     return ext_list

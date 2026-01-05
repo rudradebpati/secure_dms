@@ -1,0 +1,3 @@
+SECRET_KEY="n3!z@#1^w0l$8x%y7z&u+q)r(t*o=pb"
+ACCESS_TOKEN_LIFETIME=60 # In minutes
+REFRESH_TOKEN_LIFETIME=1 # In days

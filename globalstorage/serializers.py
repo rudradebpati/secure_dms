@@ -31,6 +31,7 @@ class FileSerializer(serializers.ModelSerializer):
 
         # Dynamically calculate file size and extension
         size_in_kb = uploaded_file.size / 1024
+        validated_data["name"] = uploaded_file.name
         validated_data["size"] = size_in_kb
         extension = os.path.splitext(uploaded_file.name)[1].lstrip(".").lower()
         # Assign supported extension
@@ -42,13 +43,13 @@ class FileSerializer(serializers.ModelSerializer):
                 "File size limit for this extension exceeded."
             )
         validated_data["file_extension"] = ext_obj
-        validated_data["name"] = uploaded_file.name
         validated_data["owner"] = user
         return File.objects.create(**validated_data)
 
     class Meta:
         model = File
-        fields = ["id", "folder", "file", "name", "size", "file_extension"]
+        read_only_fields = ["owner", "file_extension", "size"]
+        fields = ["id", "folder", "file", "name", "size", "file_extension", "owner"]
 
 
 class FileDownloadSerializer(serializers.ModelSerializer):
