@@ -21,3 +21,6 @@ staticfiles/
 static/
 .env
 *.env
+# Ignore Django migration files
+*/migrations/*.py
+*/migrations/*.pyc

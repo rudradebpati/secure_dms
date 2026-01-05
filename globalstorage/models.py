@@ -20,7 +20,7 @@ class Directory(BaseAbstractModel):
 
     class Meta:
         unique_together = ("name", "owner")  # unique folder name for each user
-        db_name="globalstorage_directories"
+        db_table="globalstorage_directories"
 
 class FileExtension(models.Model):
     name = models.CharField(max_length=255)
@@ -28,7 +28,7 @@ class FileExtension(models.Model):
     description=models.CharField(max_length=255)
 
     class Meta:
-        db_name="globalstorage_file_extension"
+        db_table="globalstorage_file_extension"
 
 class File(BaseAbstractModel):
     name=models.CharField(max_length=255)
@@ -41,7 +41,7 @@ class File(BaseAbstractModel):
     file_extension=models.ForeignKey(FileExtension, on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
-        db_name="globalstorage_files"
+        db_table="globalstorage_files"
 
 
 class UserExtensionMap(BaseAbstractModel):
@@ -50,4 +50,4 @@ class UserExtensionMap(BaseAbstractModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     class Meta:
         # unique_together = ("extension", "user")
-        db_name="globalstorage_user_extension_map"
+        db_table="globalstorage_user_extension_map"
