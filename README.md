@@ -22,7 +22,9 @@ Access to folders and files is controlled using permissions. Only the owner of a
 
 1. Clone the repository: `git clone https://github.com/rudradebpati/secure_dms.git`
 2. Install the dependencies: `pip install -r requirements.txt`
-3. Create a `.env` file in the project root directory and add the following line: `SECRET_KEY=<your-secret-key>`
+    -- Check FIXTURES dir to get a skeleton of dot env
+3. Create a `.env` file in the project root directory and add the following line: 
+`SECRET_KEY=<your-secret-key>`
 4. Run the migrations: `python manage.py migrate`
 5. Start the development server: `python manage.py runserver`
 
