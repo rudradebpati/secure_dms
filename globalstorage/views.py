@@ -1,7 +1,4 @@
 from django.http import FileResponse
-from rest_framework.response import Response
-from rest_framework import status
-from django.shortcuts import render
 from rest_framework import generics
 from .access_permissions import IsOwner
 from rest_framework.permissions import IsAuthenticated
@@ -13,6 +10,10 @@ from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
 class DirectoryListCreateView(generics.ListCreateAPIView):
+    """
+    To create Sub Directories(i.e. folder inside folder), use POST and send parent directory ID in the URL, 
+    to create directory in surface level, use POST
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = DirectorySerializer
 
@@ -25,7 +26,7 @@ class DirectoryListCreateView(generics.ListCreateAPIView):
 class DirectoryDetailView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated, IsOwner]
     serializer_class = DirectorySerializer
-    queryset = Directory.objects.all()
+    # queryset = Directory.objects.all()
 
     def get_queryset(self):
         # Always filter by the user first for security
@@ -48,11 +49,11 @@ class FileListCreateView(generics.ListCreateAPIView):
 class FileDownloadView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated, IsOwner] # IsOwner triggers 403 if check fails
     queryset = File.objects.all()
+    serializer=FileDownloadSerializer
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object() # This calls IsOwner check
-        
-        # Open the file and return as a downloadable response
+        # Open the file and return as a downloadable url in response data
         file_handle = instance.file.open()
         response = FileResponse(file_handle, content_type='application/octet-stream')
         response['Content-Disposition'] = f'attachment; filename="{instance.file.name}"'

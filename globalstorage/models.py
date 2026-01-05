@@ -22,6 +22,13 @@ class Directory(BaseAbstractModel):
         unique_together = ("name", "owner")  # unique folder name for each user
         db_name="globalstorage_directories"
 
+class FileExtension(models.Model):
+    name = models.CharField(max_length=255)
+    size_limit=models.IntegerField(default=0)    # in MB, 0 for no limit
+    description=models.CharField(max_length=255)
+
+    class Meta:
+        db_name="globalstorage_file_extension"
 
 class File(BaseAbstractModel):
     name=models.CharField(max_length=255)
@@ -31,23 +38,17 @@ class File(BaseAbstractModel):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     file = models.FileField(upload_to="uploads/")
     size=models.IntegerField(default=0) # in KB
+    file_extension=models.ForeignKey(FileExtension, on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         db_name="globalstorage_files"
 
 
-class FileExtensions(models.Model):
-    name = models.CharField(max_length=255)
-    size_limit=models.IntegerField(default=0)    # in MB, 0 for no limit
-    description=models.CharField(max_length=255)
-
-    class Meta:
-        db_name="globalstorage_file_extensions"
 
 class UserExtensionMap(BaseAbstractModel):
+    # Additional model to restrict user to specific extensions
     extension = models.ForeignKey(FileExtensions, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-
     class Meta:
         # unique_together = ("extension", "user")
         db_name="globalstorage_user_extension_map"
